@@ -19,10 +19,10 @@ void lower_case();
 void title();
 void save();
 void exit();
-
+fstream myfile;
+char name_of_file[100];
 int main () {
-    ifstream myfile;
-    char name_of_file[100];
+    cout<<"Please enter the file's name"<<endl;
     cin >> name_of_file;
     strcat(name_of_file,".txt");
     myfile.open(name_of_file);
@@ -34,6 +34,7 @@ int main () {
         file.open(name_of_file);
         cout << "This is a new file. I created it for you :)" ;
     }
+    myfile.close();
 }
 
 // __________________________________
@@ -78,19 +79,83 @@ void search_word(){
 }
 // __________________________________
 void repeated_words(){
-
+    string word,temp; char letter; int count = 0;
+    cout<<"Enter the word that you search\n";
+    cin>> word;
+    for_each(word.begin(), word.end(), [](char & c){
+        c = ::tolower(c);
+    });
+    myfile.open(name_of_file);
+    while(!myfile.eof()){
+        letter = myfile.get();
+        if (letter == EOF) {
+            if (temp == word)
+                count++;
+            temp ="";
+            break;
+        }
+        else if (!isalpha(letter) && ! isdigit(letter)){
+            if (temp == word)
+                count++;
+            temp ="";
+            continue;
+        }
+        temp += tolower(letter);
+    }
+    cout<<"THe word repeated " << count <<" of times "<<endl;
+    myfile.close();
 }
 // __________________________________
 void upper_case(){
-
+    string text;
+    char letter;
+    myfile.open(name_of_file);
+    while(!myfile.eof()){
+        letter = myfile.get();
+        if (letter == EOF)
+            break;
+        text += toupper(letter);
+    }
+    myfile.close();
+    myfile.open(name_of_file, ios::out);
+    myfile << text;
+    myfile.close();
 }
 // __________________________________
 void lower_case(){
-
+    string text;
+    char letter;
+    myfile.open(name_of_file);
+    while(!myfile.eof()){
+        letter = myfile.get();
+        if (letter == EOF)
+            break;
+        text += tolower(letter);
+    }
+    myfile.close();
+    myfile.open(name_of_file, ios::out);
+    myfile << text;
+    myfile.close();
 }
 // __________________________________
 void title(){
-
+    string text;
+    stringstream content;
+    myfile.open(name_of_file,ios::in);
+    content << myfile.rdbuf();
+    text = content.str();
+    myfile.close();
+    myfile.open(name_of_file,ios::in);
+    for(int i =0; i < text.length();i++){
+        if(isalpha(text[i]) && !(isalpha(text[i-1])))
+            text[i] = toupper(text[i]);
+        else
+            text[i] = tolower(text[i]);
+    }
+    myfile.close();
+    myfile.open(name_of_file, ios::out);
+    myfile << text;
+    myfile.close();
 }
 // __________________________________
 void save(){
