@@ -159,6 +159,31 @@ void title(){
 }
 // __________________________________
 void save(){
+    fstream newFile;
+    char new_name[100];
+    cout<<"please enter the name if the file"<<endl;
+    cin>>new_name;
+    string text;
+    stringstream content;
+    ofstream New_File;
+
+    strcat(new_name,".txt");
+    newFile.open(new_name);
+    myfile.open(new_name,ios::in);
+    myfile.close();
+    if (newFile) {
+        newFile.open(new_name);
+        newFile << text;
+        newFile.close();
+        cout<<"over wrote on this file" << endl ;
+    }
+    else {
+        New_File.open(new_name);
+        New_File << text ;
+        New_File.close();
+        cout << "This is a new file. I created it for you :)" ;
+    }
+    newFile.close();
 
 }
 // __________________________________
