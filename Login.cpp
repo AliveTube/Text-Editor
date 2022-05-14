@@ -1,6 +1,7 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <conio.h>
+#include <regex>
 using namespace std;
 
 bool valid_email();
@@ -12,13 +13,12 @@ void register_user();
 void enter_password();
 void login();
 void change_password();
-void forgot_password();
 void exit();
-string email , password , username , phone_number ,conf_password;
+
+string email , password , username , phone_number , name;
 fstream login_file;
 
 int main () {
-    login_file.open("login_file.txt",ios::app);
     cout << "Ahlan ya user ya habibi :)\n";
     cout << "Welcome to Facebook v2.0 \n";
     cout << "Please choose one of the following :\n";
@@ -28,14 +28,12 @@ int main () {
     cout << "1-Register new user." << endl <<
     "2-Login." << endl <<
     "3-Change Password." << endl <<
-    "4-Forgot password." << endl <<
-    "5-Exit." << endl ;
+    "4-Exit." << endl ;
     cin >> option ;
     if (option == "1") register_user();
     else if (option == "2") login();
     else if (option == "3") change_password();
-    else if (option == "4") forgot_password();
-    else if (option == "5") exit();
+    else if (option == "4") exit();
     else cout << "Please choose an option from (1-5) ! \n";
     }
 }
@@ -85,8 +83,9 @@ void enter_password(){
     }
 }
 // __________________________________
-bool confirm_password(){
-    int ch ;
+bool confirm_password(string conf_password){
+    for (int i = 0; i < password.length(); i++) password[i] +=1;
+    int ch;
     ch = getch();
     while (ch != 13){
         if (ch == 8) {
@@ -107,9 +106,13 @@ bool confirm_password(){
 }
 // __________________________________
 void register_user() {
+    string conf_password;
+    login_file.open("login_file.txt",ios::app);
     string check;
     cin.clear();
     cin.sync();
+    cout << "Enter your full name : ";
+    getline(cin,name);
     cout << "Enter your username : ";
     getline(cin,username);
     cout << "Enter your email : ";
@@ -127,36 +130,152 @@ void register_user() {
     enter_password();
     if (valid_password(password)) {
         cout << "\nYour password is strong :) \n";
-        for (int i = 0; i < password.length(); i++) password[i] +=1;
         }
     else {
         while(!valid_password(password)){
-            cout <<"\n" <<"Your password is WEAK \n ";
+            cout <<"\nYour password is WEAK\n";
+            password.clear();
             enter_password();
             }
-            cout << "\nYour password is strong :) \n";
         }
+
     cout << "Please confirm your password : ";
-    while (!confirm_password()) {
+    while (!confirm_password(conf_password)) {
         cout << "Please re-enter the password \n" ;
-        conf_password.clear();
     }
+    cout << "You have successfully registered :) \n";
     check += username;
-    check += '-' ;
+    check += '-';
     check += password;
-    cout << check << endl;
     login_file << check << "\n";
+    login_file.close();
 }
 // __________________________________
 void login() {
+    login_file.open("login_file.txt");
+    cin.sync();
+    cin.clear();
+    string login_user , login_password , check_login ;
+    cout << "Enter your username : " ;
+    getline (cin,login_user);
+    cout << "Enter your password : " ;
+    int ch ;
+    ch = getch();
+    while (ch != 13){
+        if (ch == 8) {
+            if (!login_password.empty()){
+                login_password.pop_back();
+                cout << "\b \b";
+                }
+        }
+        else {
+            cout << "*";
+            login_password += ch;
+            }
+        ch = getch();
+    }
+    for (int i = 0; i < login_password.size(); i++)
+    {
+        login_password[i] +=1 ;
+    }
+    check_login+=login_user;
+    check_login+='-';
+    check_login+=login_password;
 
+    bool success = false ;
+    string line ;
+    while (getline(login_file,line)){
+        if (line == check_login) {
+            cout << "\nYou have successfully logged in :) \n";
+            success = true ;
+            break;
+            }
+        }
+    if (success == false) cout << "\nFailed to login \nPlease check the username or password you entered \n";
+    cout << endl ;
 }
 // __________________________________
 void change_password() {
-
-}
-// __________________________________
-void forgot_password() {
+    string change , line ,old_password,new_password ;
+    bool success = false ;
+    cin.sync();
+    cin.clear();
+    cout << "Please enter your username : ";
+    getline (cin,username);
+    cout << "Please enter your old password : ";
+    int ch ;
+    ch = getch();
+    while (ch != 13){
+        if (ch == 8) {
+            if (!old_password.empty()){
+                old_password.pop_back();
+                cout << "\b \b";
+                }
+        }
+        else {
+            cout << "*";
+            old_password += ch;
+            }
+        ch = getch();
+    }
+    for (int i = 0; i < old_password.length(); i++) old_password[i] +=1;
+    change+=username; change+='-'; change+=old_password;
+    login_file.open("login_file.txt");
+    while (getline(login_file,line)){
+        if (line == change) {
+            success = true ;
+        }
+    }
+    if (success == true) {
+        cout << "\nEnter your new password : ";
+        int ch ;
+        ch = getch();
+        while (ch != 13){
+            if (ch == 8) {
+                if (!new_password.empty()){
+                    new_password.pop_back();
+                    cout << "\b \b";
+                    }
+            }
+            else {
+                cout << "*";
+                new_password += ch;
+                }
+            ch = getch();
+        }
+        if (valid_password(new_password)) cout << "\nYou have successfully changed your password \n";
+        else {
+            while(!valid_password(new_password)){
+                cout <<"\nYour password is WEAK\n";
+                new_password.clear();
+                cout << "\nEnter your new password : ";
+                int ch ;
+                ch = getch();
+                while (ch != 13){
+                    if (ch == 8) {
+                        if (!new_password.empty()){
+                            new_password.pop_back();
+                            cout << "\b \b";
+                            }
+                    }
+                    else {
+                        cout << "*";
+                        new_password += ch;
+                        }
+                    ch = getch();
+                    }
+                }
+            }
+        for (int i = 0; i < new_password.length(); i++) new_password[i] +=1;
+            change.clear();
+            change+=username; change+='-'; change+=new_password;
+            login_file.open("login_file.txt");
+            while (getline(login_file,line)){
+                if (line == change) login_file<<change;}
+    }
+    else cout << "\nInvalid username or password \n";
+    login_file.close();
+    cout <<endl;
 
 }
 // __________________________________
