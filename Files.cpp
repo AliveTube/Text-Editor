@@ -2,7 +2,6 @@
 #include <fstream>
 #include <bits/stdc++.h>
 using namespace std;
-
 fstream myfile;
 fstream myfile2;
 char name_of_file[100];
@@ -183,6 +182,7 @@ int CountWords() {
     while (myfile >> word) {
         number_of_words++;
     }
+    cout << number_of_words << endl;
     return number_of_words;
 }
 // __________________________________
@@ -192,6 +192,7 @@ int CountChars() {
     while (myfile >> c) {
         number_of_characters++;
     }
+    cout << number_of_characters << endl;
     return number_of_characters;
 }
 // __________________________________
@@ -202,6 +203,7 @@ int CountLines() {
         getline(myfile, line);
         lines++;
     }
+    cout << lines << endl;
     return lines - 1;
 }
 // __________________________________
