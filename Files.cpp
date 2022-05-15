@@ -220,10 +220,12 @@ string Search() {
             s[i] = tolower(s[i]);// converting each word I will take from the file to lowercase also, to compare it with the word (which) I am looking for.
         }
         if (s == word) {
-            return "The word is in this file";
+            cout<< "The word is in this file"<<endl;
+            return " ";
         }
     }
-    return "The word isn't in this file";
+  cout<< "The word isn't in this file"<<endl;
+  return " ";
 }
 // __________________________________
 void repeated_words() {
